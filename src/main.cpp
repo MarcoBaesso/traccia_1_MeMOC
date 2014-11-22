@@ -49,14 +49,14 @@ int main (int argc, char const *argv[])
                 int colonna=i%(dati.get_num_nodi()-1);
                 if (colonna>=riga)
                     colonna=colonna+1;
-                snprintf(name, NAME_SIZE, "x%d%d", riga, colonna);
+                snprintf(name, NAME_SIZE, "x_%d_%d", riga, colonna);
             }
             else{
                 int riga=(i/(dati.get_num_nodi()-1));
                 int colonna=i%(dati.get_num_nodi()-1);
                 if (colonna>=riga)
                     colonna=colonna+1;
-                snprintf(name, NAME_SIZE, "y%d%d", riga-dati.get_num_nodi(), colonna);
+                snprintf(name, NAME_SIZE, "y_%d_%d", riga-dati.get_num_nodi(), colonna);
             }
             char* var_name = (char*)(&name[0]);
             QString variabile=QString(var_name);
