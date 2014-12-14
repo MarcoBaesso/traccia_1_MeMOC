@@ -25,6 +25,8 @@ HEADERS += \
     message_error.h \
     coordinata.h \
     cpxmacro.h \
-    modello_tsp.h
+    modello_tsp.h \
+    generatore.h \
+    type_generatore_casuale.h
 
 

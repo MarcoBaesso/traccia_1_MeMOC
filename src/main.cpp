@@ -5,6 +5,9 @@
 #include <message_error.h>
 #include "cpxmacro.h"
 #include "modello_tsp.h"
+#include <time.h>
+#include <generatore.h>
+#include <type_generatore_casuale.h>
 
 using namespace std;
 
@@ -15,8 +18,24 @@ char errmsg[BUF_SIZE];
 int main (int argc, char const *argv[])
 {
     try{
-        //data dati(argv[1]);
-        data dati("ciao");
+        //argv[1] è la distribuzione dei nodi nel test
+        //argv[2] è il numero di nodi da generare
+
+        generatore_casuale type_tsp=convert_string_to_generatore(argv[1]);
+        bool ok_conversion=true;
+        int num_nodi= QString(argv[2]).toInt(&ok_conversion);
+        if (ok_conversion==false)
+            throw message_error("come secondo parametro inserire un intero");
+
+        QString input_file=genera_nodi_problema(type_tsp,num_nodi);
+
+        time_t initial_timer;
+        time(&initial_timer);
+
+        time_t final_timer;
+        double seconds;
+
+        data dati(input_file);
         int num_vars;
         vector<vector<int> > map_x;
         vector<vector<int> > map_y;
@@ -71,6 +90,9 @@ int main (int argc, char const *argv[])
         // free
         CPXfreeprob(env, &lp);
         CPXcloseCPLEX(&env);
+
+        time(&final_timer);
+        std::cout<<difftime(final_timer,initial_timer);
     }
     catch (message_error error){
         std::cout<<error.what()<<std::endl;

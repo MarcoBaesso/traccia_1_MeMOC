@@ -17,7 +17,8 @@ double data::calcola_distanza(coordinata pt1,coordinata pt2){
     l1=pt2.get_x()-pt1.get_x();
     l2=pt2.get_y()-pt1.get_y();
     // arrotondamento per eccesso
-    return ceil(sqrt(pow(l1,2)+pow(l2,2)));
+    //return ceil(sqrt(pow(l1,2)+pow(l2,2)));
+    return sqrt(pow(l1,2)+pow(l2,2));
 }
 
 data::data(QString filename)
@@ -39,6 +40,9 @@ data::data(QString filename)
 
     QByteArray dati=file.readAll();
     file.close();
+    
+
+    //std::cout<<dati.size()<<std::endl;
 
     int last_pos=0,last_virgola;
     QByteArray number;
@@ -52,6 +56,8 @@ data::data(QString filename)
         number=dati.mid(last_pos,last_virgola-last_pos);
         last_pos=last_virgola+1;
         x=number.toDouble(&is_number);
+
+        //std::cout<<x<<std::endl;
         if (number.size()==0 || is_number==false)
             throw message_error("Inserire solo cifre numeriche");
         else{
@@ -64,11 +70,14 @@ data::data(QString filename)
             //}
             last_pos=last_virgola+1;
             y=number.toDouble(&is_number);
+            //std::cout<<y<<std::endl;
             if (number.size()==0 || is_number==false)
                 throw message_error("Inserire solo cifre numeriche");
 
             //std::cout<<x<<" "<<y<<std::endl;
+
             nodi.push_back(coordinata(x,y));
+            
 
         }
     }
