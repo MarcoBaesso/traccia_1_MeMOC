@@ -10,7 +10,6 @@
 using namespace std;
 
 const QString data::path_file="data/";
-const QString data::extension=".json";
 
 double data::calcola_distanza(coordinata pt1,coordinata pt2){
     double l1,l2;

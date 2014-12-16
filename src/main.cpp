@@ -27,7 +27,15 @@ int main (int argc, char const *argv[])
         if (ok_conversion==false)
             throw message_error("come secondo parametro inserire un intero");
 
-        QString input_file=genera_nodi_problema(type_tsp,num_nodi);
+        int dispersione= QString(argv[3]).toInt(&ok_conversion);
+        if (ok_conversion==false)
+            throw message_error("come terzo parametro inserire la dispersione da cui prelevare le x");
+
+        if (dispersione<num_nodi)
+            throw message_error("la dispersione deve essere almeno pari al numero di nodi");
+
+
+        QString input_file=genera_nodi_problema(type_tsp,num_nodi,dispersione);
 
         time_t initial_timer;
         time(&initial_timer);
