@@ -8,6 +8,7 @@
 #include <time.h>
 #include <generatore.h>
 #include <type_generatore_casuale.h>
+#include <QFile>
 
 using namespace std;
 
@@ -21,21 +22,27 @@ int main (int argc, char const *argv[])
         //argv[1] è la distribuzione dei nodi nel test
         //argv[2] è il numero di nodi da generare
 
-        generatore_casuale type_tsp=convert_string_to_generatore(argv[1]);
-        bool ok_conversion=true;
-        int num_nodi= QString(argv[2]).toInt(&ok_conversion);
-        if (ok_conversion==false)
-            throw message_error("come secondo parametro inserire un intero");
+        QString input_file;
 
-        int dispersione= QString(argv[3]).toInt(&ok_conversion);
-        if (ok_conversion==false)
-            throw message_error("come terzo parametro inserire la dispersione da cui prelevare le x");
+        if (QString(argv[1])=="default"){
+            input_file= "default";
+        }
+        else{
+            generatore_casuale type_tsp=convert_string_to_generatore(argv[1]);
+            bool ok_conversion=true;
+            int num_nodi= QString(argv[2]).toInt(&ok_conversion);
+            if (ok_conversion==false)
+                throw message_error("come secondo parametro inserire un intero");
 
-        if (dispersione<num_nodi)
-            throw message_error("la dispersione deve essere almeno pari al numero di nodi");
+            int dispersione= QString(argv[3]).toInt(&ok_conversion);
+            if (ok_conversion==false)
+                throw message_error("come terzo parametro inserire la dispersione da cui prelevare le x");
 
+            if (dispersione<num_nodi)
+                throw message_error("la dispersione deve essere almeno pari al numero di nodi");
 
-        QString input_file=genera_nodi_problema(type_tsp,num_nodi,dispersione);
+            input_file=genera_nodi_problema(type_tsp,num_nodi,dispersione);
+        }
 
         time_t initial_timer;
         time(&initial_timer);
@@ -90,7 +97,9 @@ int main (int argc, char const *argv[])
             double val_solution=solution[i];
             if (val_solution==-0 || val_solution==-0.0)
                 val_solution=0;
-            std::cout<<variabile.toStdString()<<"="<<val_solution<<std::endl;
+            if (val_solution!=0)
+                std::cout<<variabile.toStdString()<<"="<<val_solution<<std::endl;
+
         }
 
         CHECKED_CPX_CALL(CPXsolwrite, env, lp, "tsp.sol");

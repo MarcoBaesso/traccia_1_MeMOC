@@ -9,6 +9,7 @@
 #include <data.h>
 #include <fstream>
 #include <iostream>
+#include <time.h>
 
 using namespace std;
 
@@ -36,23 +37,22 @@ QString genera_nodi_problema(generatore_casuale generatore, int num_nodi, int di
     //generate_x(0,num_nodi,num_nodi,input_data);
     vector<coordinata> input_data;
 
+    generate_x(1,dispersione,num_nodi,input_data);
+    //std::cout<<input_data.size();
+    if (input_data.size()!=num_nodi)
+        throw message_error("numero di x generate sbagliato");
+
+    QString path= data::path_file;
+    path.append(convert_generatore_to_string(generatore));
+
+    ofstream file;
+    file.open(path.toLatin1().data());
+
+    if (file.is_open()==false)
+        throw message_error("problemi nella scrittura del file di input");
 
     switch (generatore) {
-    case cerchio:
-        generate_x(1,dispersione,num_nodi,input_data);
-        std::cout<<input_data.size();
-        if (input_data.size()!=num_nodi)
-            throw message_error("numero di x generate sbagliato");
-
-        QString path= data::path_file;
-        path.append(convert_generatore_to_string(generatore));
-
-        ofstream file;
-        file.open(path.toLatin1().data());
-
-        if (file.is_open()==false)
-            throw message_error("problemi nella scrittura del file di input");
-
+    case cerchio:{
         // cerchio di centro (dispersione/2,0) e raggio dispersione/2
         // y^2=ax+c  con a = -dispersione e c= 0
         // y= +- sqrt(dispersione*x)
@@ -67,10 +67,26 @@ QString genera_nodi_problema(generatore_casuale generatore, int num_nodi, int di
            file << x <<","<<y<<"\n";
            //pt=coordinata(coordinata(*it).get_x(),)
         }
+        break;
+    }
+    case randoms:{
+        srand(time(NULL));
 
-        file.close();
+        coordinata pt;
+        double x,y;
+        for (std::vector<coordinata>::iterator it = input_data.begin() ; it != input_data.end(); ++it){
+           pt=*it;
+           x=coordinata(pt).get_x();
+           y=rand() % dispersione + 1;;
+           file << x <<","<<y<<"\n";
+           //pt=coordinata(coordinata(*it).get_x(),)
+        }
+        break;
+    }
 
     }
+
+    file.close();
 
     return convert_generatore_to_string(generatore);
 }
