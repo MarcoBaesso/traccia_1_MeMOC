@@ -44,11 +44,6 @@ int main (int argc, char const *argv[])
             input_file=genera_nodi_problema(type_tsp,num_nodi,dispersione);
         }
 
-        time_t initial_timer;
-        time(&initial_timer);
-
-        time_t final_timer;
-        double seconds;
 
         data dati(input_file);
         int num_vars;
@@ -68,8 +63,13 @@ int main (int argc, char const *argv[])
 
         CHECKED_CPX_CALL(CPXwriteprob, env, lp, "tsp.lp", 0);
 
+        clock_t initial_timer=clock();
+        clock_t final_timer;
+
         // optimize
         CHECKED_CPX_CALL(CPXmipopt, env, lp);
+
+        final_timer=clock()-initial_timer;
 
         // print objval
         CHECKED_CPX_CALL(CPXgetobjval, env, lp, &objval);
@@ -108,8 +108,7 @@ int main (int argc, char const *argv[])
         CPXfreeprob(env, &lp);
         CPXcloseCPLEX(&env);
 
-        time(&final_timer);
-        std::cout<<difftime(final_timer,initial_timer);
+        std::cout<<"Time: "<<(float(final_timer))/CLOCKS_PER_SEC<<" secondi"<<std::endl;
     }
     catch (message_error error){
         std::cout<<error.what()<<std::endl;

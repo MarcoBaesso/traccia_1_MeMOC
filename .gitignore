@@ -1,3 +1,7 @@
 *~
 tsp_pannelli_forati
 obj/*
+*.gz
+*.aux
+*.log
+*.pdf
