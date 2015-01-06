@@ -9,6 +9,7 @@
 #include <generatore.h>
 #include <type_generatore_casuale.h>
 #include <QFile>
+#include <fstream>
 
 using namespace std;
 
@@ -65,15 +66,27 @@ int main (int argc, char const *argv[])
 
         clock_t initial_timer=clock();
         clock_t final_timer;
+        time_t start_timer;
+        time_t end_timer;
+        double seconds;
+        time(&start_timer);
 
         // optimize
         CHECKED_CPX_CALL(CPXmipopt, env, lp);
 
         final_timer=clock()-initial_timer;
+        time(&end_timer);
+
+        seconds=difftime(end_timer,start_timer);
 
         // print objval
         CHECKED_CPX_CALL(CPXgetobjval, env, lp, &objval);
+
+        ofstream output_file;
+        output_file.open("output.txt",ios::out);
         std::cout<<"Objval: "<<objval<< std::endl;
+        output_file<<"Objval: "<<objval<<"\n";
+        output_file<<"Time: "<<(float(final_timer))/CLOCKS_PER_SEC<<" secondi\n";
 
         solution.resize(num_vars);
         CHECKED_CPX_CALL(CPXgetx, env, lp, &solution[0], 0, num_vars-1);
@@ -97,8 +110,10 @@ int main (int argc, char const *argv[])
             double val_solution=solution[i];
             if (val_solution==-0 || val_solution==-0.0)
                 val_solution=0;
-            if (val_solution!=0)
+            if (val_solution!=0){
                 std::cout<<variabile.toStdString()<<"="<<val_solution<<std::endl;
+                output_file<<variabile.toStdString()<<"="<<val_solution<<"\n";
+            }
 
         }
 
@@ -107,8 +122,10 @@ int main (int argc, char const *argv[])
         // free
         CPXfreeprob(env, &lp);
         CPXcloseCPLEX(&env);
+        output_file.close();
 
-        std::cout<<"Time: "<<(float(final_timer))/CLOCKS_PER_SEC<<" secondi"<<std::endl;
+        //std::cout<<"Time: "<<(float(final_timer))/CLOCKS_PER_SEC<<" secondi"<<std::endl;
+        std::cout<<"Time: "<<seconds<<" secondi"<<std::endl;
     }
     catch (message_error error){
         std::cout<<error.what()<<std::endl;
